@@ -6,10 +6,11 @@ import RemindersPage from './components/pages/RemindersPage';
 import MedicinesPage from './components/pages/MedicinesPage';
 import PatientsPage from './components/pages/PatientsPage';
 import SettingsPage from './components/pages/SettingsPage';
+import DevicePage from './components/pages/DevicePage';
 import NotificationBanner from './components/NotificationBanner';
 import { useNotifications } from './hooks/useNotifications';
 
-export type ActiveTab = 'dashboard' | 'reminders' | 'medicines' | 'patients' | 'settings';
+export type ActiveTab = 'dashboard' | 'reminders' | 'medicines' | 'patients' | 'settings' | 'device';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -43,6 +44,8 @@ function App() {
         return <PatientsPage />;
       case 'settings':
         return <SettingsPage />;
+      case 'device':
+        return <DevicePage />;
       default:
         return <DashboardContent reminders={reminders} onMarkTaken={handleMarkTaken} />;
     }

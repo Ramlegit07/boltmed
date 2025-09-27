@@ -4,6 +4,7 @@ import UpcomingSchedules from './cards/UpcomingSchedules';
 import AdherenceRate from './cards/AdherenceRate';
 import RecentActivity from './cards/RecentActivity';
 import NextDoseTimer from './NextDoseTimer';
+import DeviceStatus from './DeviceStatus';
 
 interface DashboardContentProps {
   reminders: Array<{
@@ -31,7 +32,14 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ reminders, onMarkTa
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <UpcomingSchedules />
         <AdherenceRate />
-        <RecentActivity />
+        <div className="lg:col-span-2">
+          <RecentActivity />
+        </div>
+      </div>
+      
+      <div className="mt-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Device Status</h2>
+        <DeviceStatus />
       </div>
     </div>
   );

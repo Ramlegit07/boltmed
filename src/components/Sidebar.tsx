@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Clock, Pill, Users, Settings, X } from 'lucide-react';
+import { Home, Clock, Pill, Users, Settings, Cpu, X } from 'lucide-react';
 import { ActiveTab } from '../App';
 
 interface SidebarProps {
@@ -15,6 +15,7 @@ const menuItems = [
   { icon: Pill, label: 'Medicines', key: 'medicines' as ActiveTab },
   { icon: Users, label: 'Patients', key: 'patients' as ActiveTab },
   { icon: Settings, label: 'Settings', key: 'settings' as ActiveTab },
+  { icon: Cpu, label: 'Device', key: 'device' as ActiveTab },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChange }) => {
