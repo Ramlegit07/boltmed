@@ -37,11 +37,6 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({ reminders, onMa
   useEffect(() => {
     const checkAlerts = () => {
       const now = new Date();
-      const currentTime = now.toLocaleTimeString('en-US', { 
-        hour12: false, 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      });
 
       const alerts: Array<{ id: string; type: 'due' | 'missed'; reminder: any }> = [];
 
@@ -49,17 +44,21 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({ reminders, onMa
         if (reminder.taken) return;
 
         const reminderTime = convertTo24Hour(reminder.time);
-        const reminderDate = new Date();
         const [hours, minutes] = reminderTime.split(':').map(Number);
+        
+        const reminderDate = new Date();
         reminderDate.setHours(hours, minutes, 0, 0);
 
-        // Check if it's time to take medicine (within 5 minutes)
-        const timeDiff = now.getTime() - reminderDate.getTime();
+        // Create alert time (10 minutes before reminder)
+        const alertTime = new Date(reminderDate.getTime() - 10 * 60 * 1000);
+        
+        // Check if it's time to show alert (10 minutes before)
+        const timeDiff = now.getTime() - alertTime.getTime();
         const minutesDiff = timeDiff / (1000 * 60);
 
-        if (minutesDiff >= 0 && minutesDiff <= 5) {
+        if (minutesDiff >= 0 && minutesDiff <= 10) {
           alerts.push({ id: reminder.id, type: 'due', reminder });
-        } else if (minutesDiff > 15) {
+        } else if (now.getTime() - reminderDate.getTime() > 15 * 60 * 1000) {
           alerts.push({ id: reminder.id, type: 'missed', reminder });
         }
       });
@@ -109,13 +108,16 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({ reminders, onMa
                 <h4 className={`font-medium ${
                   alert.type === 'due' ? 'text-emerald-800' : 'text-red-800'
                 }`}>
-                  {alert.type === 'due' ? 'Medicine Due' : 'Medicine Missed'}
+                  {alert.type === 'due' ? 'Medicine Alert - 10 min' : 'Medicine Missed'}
                 </h4>
                 <p className="text-sm text-gray-600 mt-1">
                   {alert.reminder.name} {alert.reminder.dosage}
                 </p>
                 <p className="text-xs text-gray-500">
-                  Scheduled for {alert.reminder.time}
+                  {alert.type === 'due' 
+                    ? `Take at ${alert.reminder.time} (in 10 minutes)` 
+                    : `Was scheduled for ${alert.reminder.time}`
+                  }
                 </p>
               </div>
             </div>

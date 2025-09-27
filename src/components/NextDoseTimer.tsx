@@ -143,10 +143,10 @@ const NextDoseTimer: React.FC<NextDoseTimerProps> = ({ reminders }) => {
       
       <div className="mt-4 p-3 bg-white/50 rounded-xl border border-white/50">
         <p className="text-xs text-center text-gray-600">
-          {timeLeft.hours === 0 && timeLeft.minutes <= 15 ? (
-            <span className="text-orange-600 font-medium">⚠️ Reminder coming soon!</span>
+          {timeLeft.hours === 0 && timeLeft.minutes <= 10 ? (
+            <span className="text-orange-600 font-medium">⚠️ Alert will be sent in {timeLeft.minutes} minutes!</span>
           ) : (
-            "Stay consistent with your medication schedule"
+            "You'll receive an alert 10 minutes before each dose"
           )}
         </p>
       </div>

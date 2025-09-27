@@ -64,30 +64,34 @@ export const useNotifications = (reminders: MedicineReminder[]) => {
 
   const checkReminders = useCallback(() => {
     const now = new Date();
-    const currentTime = now.toLocaleTimeString('en-US', { 
-      hour12: false, 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
 
     reminders.forEach(reminder => {
-      const reminderTime = convertTo24Hour(reminder.time);
+      if (reminder.taken) return;
       
-      // Check if it's time to take medicine
-      if (currentTime === reminderTime && !reminder.taken) {
+      const reminderTime = convertTo24Hour(reminder.time);
+      const [hours, minutes] = reminderTime.split(':').map(Number);
+      
+      // Create reminder date for today
+      const reminderDate = new Date();
+      reminderDate.setHours(hours, minutes, 0, 0);
+      
+      // Create alert time (10 minutes before reminder)
+      const alertTime = new Date(reminderDate.getTime() - 10 * 60 * 1000);
+      
+      // Check if it's time to send alert (10 minutes before)
+      const timeDiff = Math.abs(now.getTime() - alertTime.getTime());
+      if (timeDiff <= 30000) { // Within 30 seconds of alert time
         showNotification(
-          '💊 Medicine Reminder',
-          `Time to take ${reminder.name} ${reminder.dosage}`,
+          '⏰ Medicine Alert',
+          `Take ${reminder.name} ${reminder.dosage} in 10 minutes (at ${reminder.time})`,
           '💊'
         );
       }
       
-      // Check if medicine was missed (15 minutes past due)
-      const reminderDate = new Date();
-      const [hours, minutes] = reminderTime.split(':').map(Number);
-      reminderDate.setHours(hours, minutes + 15, 0, 0);
+      // Check if medicine was missed (15 minutes past the original time)
+      const missedTime = new Date(reminderDate.getTime() + 15 * 60 * 1000);
       
-      if (now >= reminderDate && !reminder.taken) {
+      if (now >= missedTime) {
         showNotification(
           '⚠️ Missed Medicine Alert',
           `You missed taking ${reminder.name} ${reminder.dosage} at ${reminder.time}`,
@@ -116,8 +120,8 @@ export const useNotifications = (reminders: MedicineReminder[]) => {
     // Request notification permission on mount
     requestNotificationPermission();
 
-    // Check reminders every minute
-    const interval = setInterval(checkReminders, 60000);
+    // Check reminders every 30 seconds for more precise timing
+    const interval = setInterval(checkReminders, 30000);
 
     // Also check immediately
     checkReminders();
